@@ -1,0 +1,19 @@
+# Hasil build Maven
+/target/
+
+# File-file Java (class dan jar)
+*.class
+*.jar
+
+# File pengaturan VSCode
+.vscode/
+
+# File IDE lain (jaga-jaga temanmu pakai IDE beda)
+.idea/
+*.iml
+.settings/
+.project
+.classpath
+
+// File mac
+.DS_Store
