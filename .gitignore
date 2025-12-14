@@ -15,5 +15,5 @@
 .project
 .classpath
 
-// File mac
+# File MacOS
 .DS_Store

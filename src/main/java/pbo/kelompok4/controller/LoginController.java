@@ -1,4 +1,4 @@
-package pbo.kelompok4;
+package pbo.kelompok4.controller;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.PasswordField;
