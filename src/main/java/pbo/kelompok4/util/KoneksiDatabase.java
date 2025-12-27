@@ -7,8 +7,8 @@ import java.sql.SQLException;
 public class KoneksiDatabase {
 
     private static final String URL = "jdbc:mysql://localhost:3306/db_tickaja";
-    private static final String USER = "root"; // user MySQL
-    private static final String PASSWORD = "sqlJRI690"; // Password MySQL
+    private static final String USER = ""; // user MySQL
+    private static final String PASSWORD = ""; // Password MySQL
 
     public static Connection getKoneksi() {
         // Hapus pengecekan "if (koneksi == null)"
