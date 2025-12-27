@@ -7,36 +7,22 @@ import java.sql.SQLException;
 public class KoneksiDatabase {
 
     private static final String URL = "jdbc:mysql://localhost:3306/db_tickaja";
-    private static final String USER = ""; // Ganti dengan user MySQL
-    private static final String PASSWORD = ""; // Ganti dengan password MySQL
-
-    private static Connection koneksi;
+    private static final String USER = "root"; // user MySQL
+    private static final String PASSWORD = "sqlJRI690"; // Password MySQL
 
     public static Connection getKoneksi() {
-        if (koneksi == null) {
-            try {
-                // Daftarkan driver JDBC
-                DriverManager.registerDriver(new com.mysql.cj.jdbc.Driver());
-                // Buat koneksi
-                koneksi = DriverManager.getConnection(URL, USER, PASSWORD);
-                System.out.println("Koneksi ke database berhasil.");
-            } catch (SQLException e) {
-                System.err.println("Koneksi ke database gagal: " + e.getMessage());
-            }
-        }
-        return koneksi;
-    }
-
-    // (Opsional) Method untuk menutup koneksi jika diperlukan
-    public static void tutupKoneksi() {
-        if (koneksi != null) {
-            try {
-                koneksi.close();
-                koneksi = null;
-                System.out.println("Koneksi ditutup.");
-            } catch (SQLException e) {
-                System.err.println("Gagal menutup koneksi: " + e.getMessage());
-            }
+        // Hapus pengecekan "if (koneksi == null)"
+        // Agar selalu return koneksi baru (belum closed)
+        try {
+            DriverManager.registerDriver(new com.mysql.cj.jdbc.Driver());
+            
+            // Selalu buat koneksi baru
+            Connection koneksiBaru = DriverManager.getConnection(URL, USER, PASSWORD);
+            return koneksiBaru;
+            
+        } catch (SQLException e) {
+            System.err.println("Koneksi ke database gagal: " + e.getMessage());
+            return null;
         }
     }
 }
