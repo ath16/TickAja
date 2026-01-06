@@ -14,8 +14,8 @@ import pbo.kelompok4.util.KoneksiDatabase;
 
 public class JadwalDAO {
 
-    // Method untuk mengambil daftar jadwal berdasarkan ID Film
-    // Dipakai di halaman FilmDetail (User)
+    // 1. Method untuk mengambil daftar jadwal berdasarkan ID Film
+    // (Dipakai di User Dashboard -> Film Detail)
     public List<JadwalTayang> getJadwalByFilmId(int filmId) {
         List<JadwalTayang> listJadwal = new ArrayList<>();
         
@@ -36,8 +36,6 @@ public class JadwalDAO {
             ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {
-                // 1. Buat Objek Film dari hasil query
-                // Kita gunakan constructor lengkap sesuai Film.java
                 Film film = new Film(
                     rs.getInt("film_id"),
                     rs.getString("judul"),
@@ -46,13 +44,10 @@ public class JadwalDAO {
                     rs.getString("poster_url")
                 );
 
-                // 2. Buat Objek Studio
                 Studio studio = new Studio();
                 studio.setId(rs.getInt("studio_id"));
                 studio.setNamaStudio(rs.getString("nama_studio"));
-                // studio.setLokasiId(...) jika perlu
 
-                // 3. Buat Objek JadwalTayang (Gabungan semuanya)
                 JadwalTayang jadwal = new JadwalTayang(
                     rs.getInt("jadwal_id"),
                     film,
@@ -69,7 +64,7 @@ public class JadwalDAO {
         return listJadwal;
     }
 
-    // Method untuk mengambil SEMUA jadwal (Dipakai di Admin Dashboard)
+    // 2. Method untuk mengambil SEMUA jadwal (Dipakai di Admin Dashboard)
     public List<JadwalTayang> getAllJadwal() {
         List<JadwalTayang> listJadwal = new ArrayList<>();
         String query = "SELECT j.jadwal_id, j.waktu_tayang, j.harga_tiket, " +
@@ -111,5 +106,25 @@ public class JadwalDAO {
             e.printStackTrace();
         }
         return listJadwal;
+    }
+
+    // 3. Method Tambah Jadwal (Fitur Baru dari Branch Byan - Diperbaiki)
+    // Dipakai saat Admin klik "Terbitkan Jadwal"
+    public void tambahJadwal(int filmId, int studioId, String waktu, int harga) {
+        String sql = "INSERT INTO jadwal_tayang (film_id, studio_id, waktu_tayang, harga_tiket) VALUES (?, ?, ?, ?)";
+        
+        try (Connection conn = KoneksiDatabase.getKoneksi();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            
+            ps.setInt(1, filmId);
+            ps.setInt(2, studioId);
+            ps.setString(3, waktu); // Format string "YYYY-MM-DD HH:MM:SS" diterima MySQL
+            ps.setInt(4, harga);
+            
+            ps.executeUpdate();
+            
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }

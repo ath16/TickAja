@@ -20,6 +20,7 @@ public class JadwalTayang {
         this.hargaTiket = hargaTiket;
     }
 
+    // Getters & Setters Standar
     public int getId() {
         return id;
     }
@@ -60,11 +61,20 @@ public class JadwalTayang {
         this.hargaTiket = hargaTiket;
     }
     
+    // --- HELPER METHODS (Untuk Kompatibilitas TableView Admin) ---
+    // TableView seringkali butuh akses properti langsung string
+    
+    public String getNamaStudio() {
+        return (studio != null) ? studio.getNamaStudio() : "-";
+    }
+
+    public String getJudulFilm() {
+        return (film != null) ? film.getJudul() : "-";
+    }
+
     @Override
     public String toString() {
-        // Method ini penting agar saat jadwal dimasukkan ke ComboBox, 
-        // yang muncul adalah teks yang mudah dibaca user
-        // Contoh output: "2025-01-01 14:00:00 (Rp 50000)"
+        // Output untuk ComboBox di halaman User
         return waktuTayang + " (Rp " + hargaTiket + ")";
     }
 }
