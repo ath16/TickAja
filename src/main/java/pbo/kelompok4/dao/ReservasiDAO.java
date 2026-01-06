@@ -157,4 +157,49 @@ public class ReservasiDAO {
             }
             return listId;
     }
+
+    public List<Reservasi> getAllReservations() {
+        List<Reservasi> list = new ArrayList<>();
+        // Join ke tabel Pengguna juga untuk lihat siapa yang pesan
+        String query = "SELECT r.reservasi_id, r.waktu_reservasi, r.total_harga, r.status_pembayaran, " +
+                       "p.nama_lengkap, " + // Ambil nama user
+                       "j.jadwal_id, f.judul, s.nama_studio " +
+                       "FROM reservasi r " +
+                       "JOIN pengguna p ON r.pengguna_id = p.pengguna_id " +
+                       "JOIN jadwal_tayang j ON r.jadwal_id = j.jadwal_id " +
+                       "JOIN film f ON j.film_id = f.film_id " +
+                       "JOIN studio s ON j.studio_id = s.studio_id " +
+                       "ORDER BY r.waktu_reservasi DESC";
+
+        try (Connection conn = KoneksiDatabase.getKoneksi();
+            PreparedStatement stmt = conn.prepareStatement(query);
+            ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    // Kita buat objek user dummy cuma buat nampung nama
+                    pbo.kelompok4.model.User user = new pbo.kelompok4.model.User();
+                    user.setNamaLengkap(rs.getString("nama_lengkap"));
+
+                    Film film = new Film();
+                    film.setJudul(rs.getString("judul"));
+
+                    Studio studio = new Studio();
+                    studio.setNamaStudio(rs.getString("nama_studio"));
+
+                    JadwalTayang jadwal = new JadwalTayang();
+                    jadwal.setFilm(film);
+                    jadwal.setStudio(studio);
+
+                    Reservasi res = new Reservasi();
+                    res.setId(rs.getInt("reservasi_id"));
+                    res.setWaktuReservasi(rs.getTimestamp("waktu_reservasi"));
+                    res.setTotalHarga(rs.getInt("total_harga"));
+                    res.setStatusPembayaran(rs.getString("status_pembayaran"));
+                    res.setPengguna(user); // Set user pemesan
+                    res.setJadwal(jadwal);
+                    
+                    list.add(res);
+                }
+            } catch (SQLException e) { e.printStackTrace(); }
+        return list;
+    }
 }

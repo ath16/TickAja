@@ -127,4 +127,16 @@ public class JadwalDAO {
             e.printStackTrace();
         }
     }
+
+    // 4. Method Hapus Jadwal
+    public void hapusJadwal(int id) {
+        String sql = "DELETE FROM jadwal_tayang WHERE jadwal_id = ?";
+        try (Connection conn = KoneksiDatabase.getKoneksi();
+            PreparedStatement ps = conn.prepareStatement(sql)) {
+                ps.setInt(1, id);
+                ps.executeUpdate();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+    }
 }

@@ -93,4 +93,46 @@ public class PenggunaDAO {
         }
         return false;
     }
+
+    public java.util.List<User> getAllUsers() {
+        java.util.List<User> users = new java.util.ArrayList<>();
+        String query = "SELECT * FROM pengguna WHERE role = 'user'"; 
+        try (Connection conn = KoneksiDatabase.getKoneksi();
+            PreparedStatement stmt = conn.prepareStatement(query);
+            ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                User u = new User();
+                    u.setId(rs.getInt("pengguna_id"));
+                    u.setUsername(rs.getString("username"));
+                    u.setNamaLengkap(rs.getString("nama_lengkap"));
+                    u.setEmail(rs.getString("email"));
+                    u.setNoTelepon(rs.getString("no_telepon"));
+                    u.setPassword(rs.getString("password")); // Hati-hati menampilkan password
+                    users.add(u);
+                }
+            } catch (SQLException e) { e.printStackTrace(); }
+        return users;
+    }
+
+    public void updateUser(User u) {
+        String sql = "UPDATE pengguna SET nama_lengkap=?, email=?, no_telepon=?, password=? WHERE pengguna_id=?";
+        try (Connection conn = KoneksiDatabase.getKoneksi();
+            PreparedStatement ps = conn.prepareStatement(sql)) {
+                ps.setString(1, u.getNamaLengkap());
+                ps.setString(2, u.getEmail());
+                ps.setString(3, u.getNoTelepon());
+                ps.setString(4, u.getPassword());
+                ps.setInt(5, u.getId());
+                ps.executeUpdate();
+            } catch (SQLException e) { e.printStackTrace(); }
+    }
+
+    public void deleteUser(int id) {
+        String sql = "DELETE FROM pengguna WHERE pengguna_id=?";
+        try (Connection conn = KoneksiDatabase.getKoneksi();
+            PreparedStatement ps = conn.prepareStatement(sql)) {
+                ps.setInt(1, id);
+                ps.executeUpdate();
+            } catch (SQLException e) { e.printStackTrace(); }
+    }
 }
