@@ -8,22 +8,73 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox alignment="CENTER" spacing="15.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pbo.kelompok4.controller.LoginController">
-   <padding>
-      <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
-   </padding>
+<VBox alignment="CENTER" prefHeight="500.0" prefWidth="700.0" style="-fx-background-color: #F4F6F8;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pbo.kelompok4.controller.LoginController">
    <children>
-      <Label text="LOGIN TICKAJA">
-         <font>
-            <Font name="System Bold" size="24.0" />
-         </font>
-      </Label>
-      <Label text="Username" />
-      <TextField fx:id="tfEmail" promptText="Masukkan Username Anda" />
-      <Label text="Password" />
-      <PasswordField fx:id="pfPassword" promptText="Masukkan Password" />
-      <Button mnemonicParsing="false" onAction="#handleLogin" text="Masuk" />
-      <Button mnemonicParsing="false" onAction="#handleToRegister" text="Belum punya akun? Daftar" textFill="#0d00ff" />
-      <Label fx:id="lblError" textFill="RED" />
+      <VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" prefWidth="400.0" spacing="20.0" style="-fx-background-color: white; -fx-background-radius: 20; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 5);">
+         <padding>
+            <Insets bottom="40.0" left="40.0" right="40.0" top="40.0" />
+         </padding>
+         <children>
+            <Label text="TICKAJA" textFill="#0984e3">
+               <font>
+                  <Font name="System Bold" size="32.0" />
+               </font>
+            </Label>
+            <Label text="Welcome back! Please login." textFill="#636e72">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <VBox.margin>
+                  <Insets top="-10.0" />
+               </VBox.margin>
+            </Label>
+            
+            <VBox alignment="CENTER_LEFT" spacing="5.0">
+               <children>
+                  <Label text="Username" textFill="#2d3436">
+                     <font>
+                        <Font name="System Bold" size="12.0" />
+                     </font>
+                  </Label>
+                  <TextField fx:id="tfEmail" prefHeight="40.0" promptText="Masukkan Username" style="-fx-background-color: #dfe6e9; -fx-background-radius: 8; -fx-border-color: transparent;" />
+               </children>
+               <VBox.margin>
+                  <Insets top="10.0" />
+               </VBox.margin>
+            </VBox>
+            
+            <VBox alignment="CENTER_LEFT" spacing="5.0">
+               <children>
+                  <Label text="Password" textFill="#2d3436">
+                     <font>
+                        <Font name="System Bold" size="12.0" />
+                     </font>
+                  </Label>
+                  <PasswordField fx:id="pfPassword" prefHeight="40.0" promptText="Masukkan Password" style="-fx-background-color: #dfe6e9; -fx-background-radius: 8; -fx-border-color: transparent;" />
+               </children>
+            </VBox>
+
+            <Button mnemonicParsing="false" onAction="#handleLogin" prefHeight="45.0" prefWidth="320.0" style="-fx-background-color: #0984e3; -fx-background-radius: 8; -fx-cursor: hand;" text="MASUK" textFill="WHITE">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+               <VBox.margin>
+                  <Insets top="10.0" />
+               </VBox.margin>
+            </Button>
+            
+            <Button mnemonicParsing="false" onAction="#handleToRegister" style="-fx-background-color: transparent; -fx-cursor: hand;" text="Belum punya akun? Daftar sekarang" textFill="#636e72" underline="true">
+               <font>
+                  <Font size="12.0" />
+               </font>
+            </Button>
+            
+            <Label fx:id="lblError" textFill="#d63031">
+               <font>
+                  <Font size="12.0" />
+               </font>
+            </Label>
+         </children>
+      </VBox>
    </children>
 </VBox>

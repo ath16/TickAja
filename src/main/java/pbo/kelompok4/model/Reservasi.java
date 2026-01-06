@@ -70,4 +70,18 @@ public class Reservasi {
     public void setWaktuReservasi(Timestamp waktuReservasi) {
         this.waktuReservasi = waktuReservasi;
     }
+
+    public String getJudulFilm() {
+        if (jadwal != null && jadwal.getFilm() != null) {
+            return jadwal.getFilm().getJudul();
+        }
+        return "-";
+    }
+
+    public String getNamaStudio() {
+        if (jadwal != null && jadwal.getStudio() != null) {
+            return jadwal.getStudio().getNamaStudio();
+        }
+        return "-";
+    }
 }

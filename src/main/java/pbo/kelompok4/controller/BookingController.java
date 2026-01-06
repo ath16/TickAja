@@ -6,14 +6,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.GridPane;
+import javafx.stage.Stage;
 import pbo.kelompok4.App;
-import pbo.kelompok4.dao.KursiDAO; // Tambahan
+import pbo.kelompok4.dao.KursiDAO;
 import pbo.kelompok4.dao.ReservasiDAO;
 import pbo.kelompok4.model.JadwalTayang;
 import pbo.kelompok4.model.Kursi;
@@ -33,10 +36,10 @@ public class BookingController {
     private JadwalTayang jadwalDipilih;
     private List<Kursi> listKursiDipilih = new ArrayList<>();
     private ReservasiDAO reservasiDAO = new ReservasiDAO();
-    private KursiDAO kursiDAO = new KursiDAO(); // Tambahan DAO
+    private KursiDAO kursiDAO = new KursiDAO(); 
 
     public void initialize() {
-        // Kosongkan, kita load kursi saat setJadwal dipanggil
+        // Kosongkan
     }
 
     public void setJadwal(JadwalTayang jadwal) {
@@ -45,47 +48,46 @@ public class BookingController {
         if (jadwal != null) {
             lblJudulFilm.setText(jadwal.getFilm().getJudul());
             lblInfoJadwal.setText(jadwal.getStudio().getNamaStudio() + " - " + jadwal.getWaktuTayang());
-            
-            // LOAD KURSI DARI DATABASE BERDASARKAN STUDIO
             loadKursiFromDB(jadwal.getStudio().getId());
         }
     }
 
     private void loadKursiFromDB(int studioId) {
         gridKursi.getChildren().clear();
-        
-        // Ambil data asli dari DB
+
         List<Kursi> listKursiDB = kursiDAO.getKursiByStudio(studioId);
 
+        List<Integer> kursiTerisi = reservasiDAO.getKursiTerisi(jadwalDipilih.getId());
+
         if (listKursiDB.isEmpty()) {
-            System.out.println("Tidak ada data kursi di database untuk studio ID: " + studioId);
             return;
         }
 
-        // Logic sederhana untuk menata Grid (Asumsi 8 kursi per baris)
-        // Jika mau lebih rapi, bisa pakai logic mapping Baris A->0, B->1 dst.
         for (Kursi kursiData : listKursiDB) {
             String kodeKursi = kursiData.getNomorBaris() + kursiData.getNomorKursi();
-            
             ToggleButton btnKursi = new ToggleButton(kodeKursi);
             btnKursi.setPrefSize(50, 40);
 
-            btnKursi.setOnAction(e -> {
-                if (btnKursi.isSelected()) {
-                    listKursiDipilih.add(kursiData);
-                    btnKursi.setStyle("-fx-background-color: #4caf50; -fx-text-fill: white;");
-                } else {
-                    listKursiDipilih.remove(kursiData);
-                    btnKursi.setStyle(""); 
-                }
-                updateTotalHarga();
-            });
+            if (kursiTerisi.contains(kursiData.getId())) {
+                // Jika kursi sudah dibooking
+                btnKursi.setDisable(true); // Tidak bisa diklik
+                btnKursi.setStyle("-fx-background-color: #e57373; -fx-text-fill: white; -fx-opacity: 1.0;");
+            } else {
+                // Jika kursi tersedia
+                btnKursi.setOnAction(e -> {
+                    if (btnKursi.isSelected()) {
+                        listKursiDipilih.add(kursiData);
+                        btnKursi.setStyle("-fx-background-color: #4caf50; -fx-text-fill: white;");
+                    } else {
+                        listKursiDipilih.remove(kursiData);
+                        btnKursi.setStyle("");
+                    }
+                    updateTotalHarga();
+                });
+            }
 
-            // Tentukan posisi Grid berdasarkan Baris dan Nomor
-            // A -> Row 0, B -> Row 1, dst.
             int row = kursiData.getNomorBaris().charAt(0) - 'A'; 
             int col = kursiData.getNomorKursi() - 1;
-            
             gridKursi.add(btnKursi, col, row);
         }
     }
@@ -107,6 +109,17 @@ public class BookingController {
             return;
         }
 
+        List<Integer> kursiTerisiBaru = reservasiDAO.getKursiTerisi(jadwalDipilih.getId());
+        for (Kursi k : listKursiDipilih) {
+            if (kursiTerisiBaru.contains(k.getId())) {
+                showAlert(AlertType.ERROR, "Gagal", "Maaf, kursi " + k.getNomorBaris() + k.getNomorKursi() + " Sudah dipesan orang lain!");
+                loadKursiFromDB(jadwalDipilih.getStudio().getId()); // Refresh tampilan
+                listKursiDipilih.clear();
+                updateTotalHarga();
+                return;
+            }
+        }
+
         User user = (User) currentUser;
         int totalHarga = listKursiDipilih.size() * jadwalDipilih.getHargaTiket();
 
@@ -121,15 +134,43 @@ public class BookingController {
 
         if (sukses) {
             showAlert(AlertType.INFORMATION, "Berhasil!", "Tiket berhasil dipesan.");
-            try { App.setRoot("UserDashboard"); } catch (IOException e) { e.printStackTrace(); }
+            
+            // --- REVISI: KEMBALI KE DETAIL FILM SETELAH SUKSES ---
+            goToFilmDetail();
+            
         } else {
-            showAlert(AlertType.ERROR, "Gagal", "Terjadi kesalahan sistem.");
+            showAlert(AlertType.ERROR, "Gagal", "Terjadi kesalahan sistem saat pemesanan.");
         }
     }
     
     @FXML
-    private void handleKembali() throws IOException {
-        App.setRoot("UserDashboard"); 
+    private void handleKembali() {
+        // --- PERBAIKAN TOMBOL KEMBALI ---
+        // Kita gunakan logika yang sama: kembali ke Detail Film (lebih masuk akal daripada Dashboard)
+        // Jika User menekan "Batal", mereka kembali melihat detail film tersebut.
+        goToFilmDetail();
+    }
+
+    // Method Helper untuk Pindah ke Halaman Detail Film
+    private void goToFilmDetail() {
+        try {
+            FXMLLoader loader = new FXMLLoader(App.class.getResource("view/FilmDetail.fxml"));
+            Parent root = loader.load();
+
+            // Kirim Data Film Kembali ke Controller Detail
+            if (jadwalDipilih != null) {
+                FilmDetailController controller = loader.getController();
+                controller.setFilm(jadwalDipilih.getFilm());
+            }
+
+            // Ambil Stage yang sedang aktif dan ganti Scene-nya
+            Stage currentStage = (Stage) btnPesan.getScene().getWindow();
+            currentStage.getScene().setRoot(root);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert(AlertType.ERROR, "Error", "Gagal kembali ke halaman film: " + e.getMessage());
+        }
     }
 
     private void showAlert(AlertType type, String title, String content) {

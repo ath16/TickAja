@@ -93,8 +93,23 @@ public class FilmDetailController {
     }
 
     @FXML
-    private void handleKembali() throws IOException {
-        App.setRoot("UserDashboard");
+    private void handleKembali() {
+        try {
+            // 1. Load Manual file UserDashboard
+            FXMLLoader loader = new FXMLLoader(App.class.getResource("view/UserDashboard.fxml"));
+            Parent root = loader.load();
+
+            // 2. AMBIL STAGE YANG SEDANG AKTIF (Ini kuncinya!)
+            // Kita "numpang" ambil stage lewat Label Judul atau komponen apapun yang ada di layar
+            Stage currentStage = (Stage) lblJudul.getScene().getWindow();
+
+            // 3. Pasang Dashboard ke Stage tersebut
+            currentStage.getScene().setRoot(root);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert(AlertType.ERROR, "Error", "Gagal kembali ke dashboard: " + e.getMessage());
+        }
     }
 
     private void showAlert(AlertType type, String title, String content) {

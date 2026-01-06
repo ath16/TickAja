@@ -1,11 +1,12 @@
 package pbo.kelompok4.controller;
 
 import java.io.IOException;
+
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.scene.control.Alert.AlertType;
 import pbo.kelompok4.App;
 import pbo.kelompok4.dao.PenggunaDAO;
 import pbo.kelompok4.model.User;

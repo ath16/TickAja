@@ -9,11 +9,15 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import pbo.kelompok4.App;
 import pbo.kelompok4.dao.FilmDAO;
@@ -27,38 +31,48 @@ public class UserDashboardController {
     private Label lblWelcome;
 
     @FXML
-    private GridPane filmContainer; // Pastikan di FXML ada GridPane dengan fx:id ini
+    private GridPane filmContainer;
 
     private FilmDAO filmDAO = new FilmDAO();
 
     public void initialize() {
-        // Tampilkan sapaan user
-        Pengguna user = Session.getUser();
-        if (user != null) {
-            lblWelcome.setText("Selamat Datang, " + user.getNamaLengkap() + "!");
+        // Load User Info (Dengan Safety Try-Catch)
+        try {
+            Pengguna user = Session.getUser();
+            if (user != null && lblWelcome != null) {
+                lblWelcome.setText("Selamat Datang, " + user.getNamaLengkap() + "!");
+            } else if (lblWelcome != null) {
+                lblWelcome.setText("Selamat Datang, Pengunjung!");
+            }
+        } catch (Exception e) {
+            System.err.println("Warning: Gagal memuat info user: " + e.getMessage());
+            if (lblWelcome != null) lblWelcome.setText("Selamat Datang!");
         }
 
-        // Load daftar film
-        loadFilms();
+        // Load Daftar Film
+        try {
+            loadFilms();
+        } catch (Exception e) {
+            System.err.println("Warning: Gagal memuat film: " + e.getMessage());
+        }
     }
 
     private void loadFilms() {
         List<Film> films = filmDAO.getAllFilms();
         
+        if (films == null || films.isEmpty()) return;
+
         int column = 0;
         int row = 1;
 
         try {
             for (Film film : films) {
-                // Membuat Tampilan Kartu Film secara Coding (Dynamic)
                 VBox card = createFilmCard(film);
-
-                // Tambahkan ke Grid (col, row)
-                filmContainer.add(card, column, row);
-                
+                if (filmContainer != null) {
+                    filmContainer.add(card, column, row);
+                }
                 column++;
-                // Jika sudah 3 kolom, pindah ke baris baru
-                if (column == 3) {
+                if (column == 3) { 
                     column = 0;
                     row++;
                 }
@@ -69,38 +83,45 @@ public class UserDashboardController {
     }
 
     private VBox createFilmCard(Film film) {
-        // 1. Setup VBox (Kartu)
         VBox box = new VBox();
-        box.setAlignment(Pos.CENTER);
-        box.setSpacing(10);
-        box.setPadding(new Insets(10));
-        box.setStyle("-fx-background-color: white; -fx-background-radius: 10; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 0);");
-        box.setPrefWidth(200);
 
-        // 2. Setup Gambar Poster
+        String normalStyle = "-fx-background-color: white; -fx-background-radius: 15; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 5);";
+        String hoverStyle = "-fx-background-color: white; -fx-background-radius: 15; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 15, 0, 0, 5); -fx-scale-x: 1.02; -fx-scale-y: 1.02;";
+
+        box.setStyle(normalStyle);
+        box.setAlignment(Pos.TOP_CENTER);
+        box.setSpacing(15);
+        box.setPadding(new Insets(15));
+        box.setPrefWidth(220);
+        box.setPrefHeight(340);
+        box.setCursor(javafx.scene.Cursor.HAND);
+
+        box.setOnMouseEntered(e -> box.setStyle(hoverStyle));
+        box.setOnMouseExited(e -> box.setStyle(normalStyle));
+
         ImageView imageView = new ImageView();
         try {
-            // Asumsi gambar ada di folder resources/images/
-            // Jika file tidak ada, pakai placeholder
-            String imagePath = getClass().getResource("/pbo/kelompok4/images/" + film.getPosterUrl()).toExternalForm();
-            imageView.setImage(new Image(imagePath));
-        } catch (Exception e) {
-            // Gambar default jika error/tidak ditemukan
-            // imageView.setImage(new Image("...")); 
-        }
+            String posterName = (film.getPosterUrl() != null && !film.getPosterUrl().isEmpty()) 
+                                ? film.getPosterUrl() : "default.jpg";
+            String imagePath = "";
+
+            if (getClass().getResource("/pbo/kelompok4/images/" + posterName) != null) {
+                imagePath = getClass().getResource("/pbo/kelompok4/images/" + posterName).toExternalForm();
+                imageView.setImage(new Image(imagePath));
+            }
+        } catch (Exception e) { }
         imageView.setFitWidth(150);
         imageView.setFitHeight(220);
         imageView.setPreserveRatio(true);
 
-        // 3. Setup Judul
         Label title = new Label(film.getJudul());
-        title.setStyle("-fx-font-weight: bold; -fx-font-size: 14px;");
+        title.setTextFill(Color.web("#2d3436"));
+        title.setStyle("-fx-font-weight: bold; -fx-font-size: 15px; -fx-font-family: 'System';");
         title.setWrapText(true);
+        title.setTextAlignment(TextAlignment.CENTER);
+        title.setMaxWidth(190);
 
-        // 4. Masukkan komponen ke VBox
         box.getChildren().addAll(imageView, title);
-
-        // 5. Event Klik: Pindah ke Detail
         box.setOnMouseClicked(event -> showFilmDetail(film));
 
         return box;
@@ -108,15 +129,13 @@ public class UserDashboardController {
 
     private void showFilmDetail(Film film) {
         try {
-            // Load FXML Detail
             FXMLLoader loader = new FXMLLoader(App.class.getResource("view/FilmDetail.fxml"));
             Parent root = loader.load();
 
-            // Ambil Controller-nya & Kirim Data Film
             FilmDetailController controller = loader.getController();
             controller.setFilm(film);
 
-            // Pindah Scene
+            // Ganti Scene Manual
             Stage stage = (Stage) lblWelcome.getScene().getWindow();
             stage.setScene(new Scene(root));
             stage.show();
@@ -126,14 +145,48 @@ public class UserDashboardController {
         }
     }
     
+    // --- PERBAIKAN LOGOUT (Manual Stage) ---
     @FXML
-    private void handleLogout() throws IOException {
-        Session.logout();
-        App.setRoot("Login");
+    private void handleLogout() {
+        try {
+            Session.logout();
+            
+            // Load Login FXML
+            FXMLLoader loader = new FXMLLoader(App.class.getResource("view/Login.fxml"));
+            Parent root = loader.load();
+
+            // Ambil Stage Aktif & Ganti Root
+            Stage currentStage = (Stage) lblWelcome.getScene().getWindow();
+            currentStage.getScene().setRoot(root);
+            
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert("Error Logout", "Gagal memuat halaman Login.");
+        }
     }
 
+    // --- PERBAIKAN HISTORY (Manual Stage) ---
     @FXML
-    private void handleOrderHistory() throws IOException {
-        App.setRoot("OrderHistory");
+    private void handleOrderHistory() {
+        try {
+            // Load History FXML
+            FXMLLoader loader = new FXMLLoader(App.class.getResource("view/OrderHistory.fxml"));
+            Parent root = loader.load();
+
+            // Ambil Stage Aktif & Ganti Root
+            Stage currentStage = (Stage) lblWelcome.getScene().getWindow();
+            currentStage.getScene().setRoot(root);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert("Error Navigasi", "Gagal memuat halaman Riwayat Order.");
+        }
+    }
+
+    private void showAlert(String title, String content) {
+        Alert alert = new Alert(AlertType.ERROR);
+        alert.setTitle(title);
+        alert.setContentText(content);
+        alert.showAndWait();
     }
 }

@@ -1,120 +1,180 @@
-package com.tickaja.controller;
+package pbo.kelompok4.controller;
 
-import com.tickaja.dao.FilmDAO;
-import com.tickaja.dao.JadwalDAO;
-import com.tickaja.model.Film;
-import com.tickaja.model.JadwalTayang;
+import java.io.IOException;
+import java.net.URL;
+import java.util.List;
+import java.util.ResourceBundle;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import pbo.kelompok4.App;
+import pbo.kelompok4.dao.FilmDAO;
+import pbo.kelompok4.dao.JadwalDAO;
+import pbo.kelompok4.dao.LokasiDAO;
+import pbo.kelompok4.model.Film;
+import pbo.kelompok4.model.JadwalTayang;
+import pbo.kelompok4.model.Studio;
+import pbo.kelompok4.util.Session;
 
-public class AdminDashboardController {
-    
-    // --- INPUT FILM ---
-    @FXML private TextField txtJudul, txtDeskripsi, txtDurasi, txtPoster;
+public class AdminDashboardController implements Initializable {
+
+    // --- TAB 1: DATA FILM ---
+    @FXML private TextField txtJudul;
+    @FXML private TextField txtDeskripsi;
+    @FXML private TextField txtDurasi;
+    @FXML private TextField txtPoster;
     @FXML private TableView<Film> tabelFilm;
     @FXML private TableColumn<Film, String> colJudul;
     @FXML private TableColumn<Film, Integer> colDurasi;
-    
-    // --- INPUT JADWAL ---
-    @FXML private ComboBox<Film> comboFilm; 
-    @FXML private ComboBox<String> comboStudio;
-    @FXML private TextField txtWaktu, txtHarga;
-    @FXML private TableView<JadwalTayang> tabelJadwal;
-    @FXML private TableColumn<JadwalTayang, String> colJadwalFilm, colJadwalStudio, colJadwalWaktu;
 
+    // --- TAB 2: JADWAL TAYANG ---
+    @FXML private ComboBox<Film> comboFilm;
+    @FXML private ComboBox<Studio> comboStudio;
+    @FXML private TextField txtWaktu;
+    @FXML private TextField txtHarga;
+    @FXML private TableView<JadwalTayang> tabelJadwal;
+    @FXML private TableColumn<JadwalTayang, String> colJadwalFilm;
+    @FXML private TableColumn<JadwalTayang, String> colJadwalStudio;
+    @FXML private TableColumn<JadwalTayang, String> colJadwalWaktu;
+
+    // DAO
     private FilmDAO filmDAO = new FilmDAO();
     private JadwalDAO jadwalDAO = new JadwalDAO();
+    private LokasiDAO lokasiDAO = new LokasiDAO(); 
 
-    @FXML
-    public void initialize() {
-        // Setup Tabel
-        colJudul.setCellValueFactory(new PropertyValueFactory<>("judul"));
-        colDurasi.setCellValueFactory(new PropertyValueFactory<>("durasi"));
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        setupTabelFilm();
+        setupTabelJadwal();
         
-        colJadwalFilm.setCellValueFactory(new PropertyValueFactory<>("judulFilm"));
-        colJadwalStudio.setCellValueFactory(new PropertyValueFactory<>("namaStudio"));
-        colJadwalWaktu.setCellValueFactory(new PropertyValueFactory<>("waktuTayang"));
-
-        // Setup Dropdown Studio (Manual sesuai data dummy SQL)
-        comboStudio.setItems(FXCollections.observableArrayList("Studio 1 (Regular)", "Studio 2 (VIP)", "Studio IMAX"));
-        
-        loadData();
+        loadDataFilm();
+        loadDataJadwal();
+        loadComboData();
     }
 
-    private void loadData() {
-        ObservableList<Film> dataFilm = FXCollections.observableArrayList(filmDAO.getAllFilm());
-        tabelFilm.setItems(dataFilm);
-        comboFilm.setItems(dataFilm); 
-        
-        ObservableList<JadwalTayang> dataJadwal = FXCollections.observableArrayList(jadwalDAO.getAllJadwal());
-        tabelJadwal.setItems(dataJadwal);
+    // --- LOGIKA FILM ---
+    private void setupTabelFilm() {
+        colJudul.setCellValueFactory(new PropertyValueFactory<>("judul"));
+        colDurasi.setCellValueFactory(new PropertyValueFactory<>("durasiMenit")); 
+    }
+
+    private void loadDataFilm() {
+        List<Film> list = filmDAO.getAllFilms();
+        ObservableList<Film> observableList = FXCollections.observableArrayList(list);
+        tabelFilm.setItems(observableList);
     }
 
     @FXML
     private void handleSimpanFilm() {
         try {
-            Film f = new Film(0, txtJudul.getText(), txtDeskripsi.getText(), 
-                              Integer.parseInt(txtDurasi.getText()), txtPoster.getText());
-            filmDAO.tambahFilm(f);
-            loadData();
-            bersihkanForm();
-            showAlert("Sukses", "Data film berhasil disimpan!");
-        } catch (Exception e) {
-            showAlert("Error", "Cek input durasi (harus angka)!");
-        }
-    }
-    
-    @FXML
-    private void handleSimpanJadwal() {
-        try {
-            Film filmDipilih = comboFilm.getValue();
-            if (filmDipilih == null || comboStudio.getValue() == null) {
-                showAlert("Peringatan", "Pilih Film dan Studio dulu!");
+            String judul = txtJudul.getText();
+            String deskripsi = txtDeskripsi.getText();
+            String durasiText = txtDurasi.getText();
+            String poster = txtPoster.getText();
+
+            if (judul.isEmpty() || durasiText.isEmpty()) {
+                showAlert(AlertType.WARNING, "Peringatan", "Judul dan Durasi harus diisi!");
                 return;
             }
 
-            int studioId = 1; // Default
-            if(comboStudio.getValue().contains("IMAX")) studioId = 3;
-            else if(comboStudio.getValue().contains("VIP")) studioId = 2;
+            int durasi = Integer.parseInt(durasiText);
+
+            Film filmBaru = new Film(0, judul, deskripsi, durasi, poster);
+            filmDAO.tambahFilm(filmBaru);
             
-            jadwalDAO.tambahJadwal(filmDipilih.getId(), studioId, txtWaktu.getText(), Integer.parseInt(txtHarga.getText()));
-            loadData();
-            showAlert("Sukses", "Jadwal berhasil diterbitkan!");
+            showAlert(AlertType.INFORMATION, "Sukses", "Film berhasil ditambahkan!");
+            clearFormFilm();
+            loadDataFilm();
+            loadComboData(); // PENTING: Refresh combo box film di tab sebelah agar film baru muncul
+        } catch (NumberFormatException e) {
+            showAlert(AlertType.ERROR, "Error", "Durasi harus berupa angka!");
         } catch (Exception e) {
-             showAlert("Error", "Cek input harga/waktu!");
+            showAlert(AlertType.ERROR, "Error", "Gagal menyimpan film: " + e.getMessage());
         }
     }
-    
-    // Fitur Hapus Film (Tambahan untuk CRUD)
+
+    private void clearFormFilm() {
+        txtJudul.clear();
+        txtDeskripsi.clear();
+        txtDurasi.clear();
+        txtPoster.clear();
+    }
+
+    // --- LOGIKA JADWAL ---
+    private void setupTabelJadwal() {
+        colJadwalFilm.setCellValueFactory(new PropertyValueFactory<>("judulFilm")); 
+        colJadwalStudio.setCellValueFactory(new PropertyValueFactory<>("namaStudio"));
+        colJadwalWaktu.setCellValueFactory(new PropertyValueFactory<>("waktuTayang"));
+    }
+
+    private void loadDataJadwal() {
+        List<JadwalTayang> list = jadwalDAO.getAllJadwal();
+        ObservableList<JadwalTayang> observableList = FXCollections.observableArrayList(list);
+        tabelJadwal.setItems(observableList);
+    }
+
+    private void loadComboData() {
+        // Load Film ke Combo
+        List<Film> films = filmDAO.getAllFilms();
+        comboFilm.setItems(FXCollections.observableArrayList(films));
+
+        // Load Studio ke Combo
+        List<Studio> studios = lokasiDAO.getAllStudio(); 
+        comboStudio.setItems(FXCollections.observableArrayList(studios));
+    }
+
     @FXML
-    private void handleHapusFilm() {
-        Film selected = tabelFilm.getSelectionModel().getSelectedItem();
-        if (selected != null) {
-            filmDAO.hapusFilm(selected.getId());
-            loadData();
-        } else {
-            showAlert("Peringatan", "Pilih film yang mau dihapus!");
+    private void handleSimpanJadwal() {
+        try {
+            Film film = comboFilm.getValue();
+            Studio studio = comboStudio.getValue();
+            String waktu = txtWaktu.getText(); // Format: YYYY-MM-DD HH:MM:SS
+            String hargaText = txtHarga.getText();
+
+            if (film == null || studio == null || waktu.isEmpty() || hargaText.isEmpty()) {
+                showAlert(AlertType.WARNING, "Peringatan", "Mohon lengkapi semua data jadwal!");
+                return;
+            }
+
+            int harga = Integer.parseInt(hargaText);
+
+            // Simpan lewat DAO
+            jadwalDAO.tambahJadwal(film.getFilmId(), studio.getId(), waktu, harga);
+            
+            showAlert(AlertType.INFORMATION, "Sukses", "Jadwal berhasil diterbitkan!");
+            loadDataJadwal();
+            
+            // Clear input
+            txtWaktu.clear();
+            txtHarga.clear();
+        } catch (NumberFormatException e) {
+            showAlert(AlertType.ERROR, "Error", "Harga harus berupa angka!");
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert(AlertType.ERROR, "Error", "Gagal simpan jadwal. Pastikan format waktu benar (YYYY-MM-DD HH:MM:SS).");
         }
     }
 
-    private void bersihkanForm() {
-        txtJudul.clear(); txtDeskripsi.clear(); txtDurasi.clear();
-        txtWaktu.clear(); txtHarga.clear();
+    // --- LOGOUT ---
+    @FXML
+    private void handleLogout() throws IOException {
+        Session.logout();
+        App.setRoot("Login");
     }
 
-    private void showAlert(String title, String content) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+    private void showAlert(AlertType type, String title, String content) {
+        Alert alert = new Alert(type);
         alert.setTitle(title);
-        alert.setHeaderText(null);
         alert.setContentText(content);
-        alert.show();
+        alert.showAndWait();
     }
 }

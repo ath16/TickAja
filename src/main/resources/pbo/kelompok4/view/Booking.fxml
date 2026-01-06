@@ -6,71 +6,77 @@
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" spacing="12.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pbo.kelompok4.controller.BookingController">
+<VBox alignment="CENTER" prefHeight="700.0" prefWidth="900.0" spacing="15.0" style="-fx-background-color: #2d3436;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pbo.kelompok4.controller.BookingController">
    <children>
-      <Label fx:id="lblJudulFilm" alignment="CENTER" contentDisplay="CENTER" maxWidth="500.0" text="Judul Film" textAlignment="CENTER" wrapText="true">
-         <font>
-            <Font name="System Bold" size="24.0" />
-         </font>
-      </Label>
-
-      <Label fx:id="lblInfoJadwal" alignment="CENTER" contentDisplay="CENTER" maxWidth="500.0" text="Studio 1 - 14:00" textAlignment="CENTER" textFill="#575757">
-         <font>
-            <Font size="18.0" />
-         </font>
-      </Label>
-
-      <Label alignment="CENTER" contentDisplay="CENTER" maxWidth="480.0" prefHeight="30.0" style="-fx-background-color: #e0e0e0; -fx-background-radius: 0 0 50 50;" text="LAYAR BIOSKOP" textAlignment="CENTER" textFill="#8d8d8d">
-         <font>
-            <Font name="System Bold" size="12.0" />
-         </font>
-         <VBox.margin>
-            <Insets bottom="10.0" top="10.0" />
-         </VBox.margin>
-      </Label>
-
-      <ScrollPane fitToHeight="true" fitToWidth="true" maxWidth="550.0" minHeight="300.0" prefHeight="350.0" style="-fx-background-color: transparent; -fx-background: transparent;">
-         <content>
-            <GridPane fx:id="gridKursi" alignment="CENTER" hgap="10.0" vgap="10.0">
-              </GridPane>
-         </content>
-      </ScrollPane>
-
-      <HBox alignment="CENTER_RIGHT" maxWidth="500.0" spacing="10.0">
+      <VBox alignment="CENTER" spacing="5.0">
          <children>
-            <Label text="Total Harga:">
+            <Label fx:id="lblJudulFilm" text="JUDUL FILM" textFill="WHITE">
                <font>
-                  <Font size="15.0" />
+                  <Font name="System Bold" size="28.0" />
                </font>
             </Label>
-            <Label fx:id="lblTotalHarga" text="Rp 0" textFill="#d32f2f">
+            <Label fx:id="lblInfoJadwal" text="Studio 1 - 14:00" textFill="#b2bec3">
                <font>
-                  <Font name="System Bold" size="18.0" />
+                  <Font size="16.0" />
                </font>
             </Label>
          </children>
          <VBox.margin>
-            <Insets top="10.0" />
+            <Insets bottom="10.0" top="10.0" />
          </VBox.margin>
+      </VBox>
+
+      <VBox alignment="CENTER">
+          <children>
+              <Label alignment="CENTER" prefHeight="40.0" prefWidth="600.0" style="-fx-background-color: #636e72; -fx-background-radius: 10 10 100 100; -fx-effect: dropshadow(three-pass-box, rgba(255,255,255,0.3), 20, 0, 0, 0);" text="LAYAR BIOSKOP" textFill="#dfe6e9">
+                 <font>
+                    <Font name="System Bold" size="14.0" />
+                 </font>
+              </Label>
+          </children>
+          <VBox.margin>
+              <Insets bottom="30.0" />
+          </VBox.margin>
+      </VBox>
+
+      <ScrollPane fitToHeight="true" fitToWidth="true" maxWidth="700.0" minHeight="350.0" style="-fx-background-color: transparent; -fx-background: transparent;">
+         <content>
+            <GridPane fx:id="gridKursi" alignment="CENTER" hgap="12.0" vgap="12.0" style="-fx-background-color: transparent;">
+                </GridPane>
+         </content>
+      </ScrollPane>
+
+      <HBox alignment="CENTER" maxWidth="700.0" spacing="20.0" style="-fx-background-color: #353b48; -fx-padding: 15; -fx-background-radius: 15;">
+         <children>
+            <Label text="Total Pembayaran:" textFill="WHITE">
+               <font>
+                  <Font size="16.0" />
+               </font>
+            </Label>
+            <Label fx:id="lblTotalHarga" text="Rp 0" textFill="#00b894">
+               <font>
+                  <Font name="System Bold" size="24.0" />
+               </font>
+            </Label>
+            <Region HBox.hgrow="ALWAYS" />
+            <Button mnemonicParsing="false" onAction="#handleKembali" style="-fx-background-color: transparent; -fx-cursor: hand;" text="Batalkan" textFill="#ff7675">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+            </Button>
+            <Button fx:id="btnPesan" disable="true" mnemonicParsing="false" onAction="#handlePesan" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #0984e3; -fx-background-radius: 8; -fx-cursor: hand;" text="BAYAR SEKARANG" textFill="WHITE">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+            </Button>
+         </children>
       </HBox>
-
-      <Button fx:id="btnPesan" disable="true" maxWidth="500.0" mnemonicParsing="false" onAction="#handlePesan" prefHeight="40.0" style="-fx-background-color: #2196f3; -fx-text-fill: white;" text="Pesan Sekarang">
-         <font>
-            <Font name="System Bold" size="15.0" />
-         </font>
-      </Button>
-
-      <Button maxWidth="500.0" mnemonicParsing="false" onAction="#handleKembali" text="Kembali / Batal">
-         <font>
-            <Font size="15.0" />
-         </font>
-      </Button>
-
    </children>
    <padding>
-      <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+      <Insets bottom="20.0" />
    </padding>
 </VBox>

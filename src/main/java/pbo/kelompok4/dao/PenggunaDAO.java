@@ -15,7 +15,7 @@ public class PenggunaDAO {
     // Method untuk Mendaftarkan User Baru (Register)
     public boolean registerUser(User user) {
         // Query SQL untuk memasukkan data
-        String query = "INSERT INTO pengguna (username, password, nama_lengkap, email, role) VALUES (?, ?, ?, ?, ?)";
+        String query = "INSERT INTO pengguna (username, password, nama_lengkap, email, no_telepon, role) VALUES (?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = KoneksiDatabase.getKoneksi();
              PreparedStatement stmt = conn.prepareStatement(query)) {
@@ -24,7 +24,8 @@ public class PenggunaDAO {
             stmt.setString(2, user.getPassword()); // Idealnya password di-hash
             stmt.setString(3, user.getNamaLengkap());
             stmt.setString(4, user.getEmail());
-            stmt.setString(5, "user"); // Role otomatis 'user'
+            stmt.setString(5, user.getNoTelepon());
+            stmt.setString(6, "user"); // Role otomatis 'user'
 
             int rowsAffected = stmt.executeUpdate();
             return rowsAffected > 0;
@@ -67,7 +68,7 @@ public class PenggunaDAO {
                     user.setPassword(rs.getString("password"));
                     user.setNamaLengkap(rs.getString("nama_lengkap"));
                     user.setEmail(rs.getString("email"));
-                    // user.setNoTelepon(...) -> Nanti jika kolom DB sudah ditambahkan
+                    user.setNoTelepon(rs.getString("no_telepon"));
                     return user;
                 }
             }
