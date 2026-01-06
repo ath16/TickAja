@@ -15,23 +15,18 @@ public class PenggunaDAO {
     // Method untuk Mendaftarkan User Baru (Register)
     public boolean registerUser(User user) {
         // Query SQL untuk memasukkan data
-        // Catatan: no_telepon belum ada di database, jadi kita simpan data intinya dulu
         String query = "INSERT INTO pengguna (username, password, nama_lengkap, email, role) VALUES (?, ?, ?, ?, ?)";
 
         try (Connection conn = KoneksiDatabase.getKoneksi();
              PreparedStatement stmt = conn.prepareStatement(query)) {
 
-            // Mengisi tanda tanya (?) dengan data dari object User
             stmt.setString(1, user.getUsername());
-            stmt.setString(2, user.getPassword()); // Idealnya password di-hash (enkripsi) dulu
+            stmt.setString(2, user.getPassword()); // Idealnya password di-hash
             stmt.setString(3, user.getNamaLengkap());
             stmt.setString(4, user.getEmail());
-            stmt.setString(5, "user"); // Role otomatis diset sebagai 'user'
+            stmt.setString(5, "user"); // Role otomatis 'user'
 
-            // Jalankan perintah INSERT
             int rowsAffected = stmt.executeUpdate();
-            
-            // Jika baris yang berubah > 0, berarti berhasil
             return rowsAffected > 0;
 
         } catch (SQLException e) {
@@ -40,7 +35,7 @@ public class PenggunaDAO {
         }
     }
 
-    // Method untuk Cek Login (Akan dipakai User & Admin)
+    // Method untuk Cek Login (Mendukung Admin & User)
     public Pengguna login(String username, String password) {
         String query = "SELECT * FROM pengguna WHERE username = ? AND password = ?";
 
@@ -81,17 +76,17 @@ public class PenggunaDAO {
             System.err.println("Gagal Login: " + e.getMessage());
         }
         
-        return null; // Jika login gagal atau user tidak ditemukan
+        return null; // Login gagal
     }
     
-    // Method cek apakah username sudah ada (Untuk validasi di Register)
+    // Method Validasi Username
     public boolean isUsernameExists(String username) {
         String query = "SELECT 1 FROM pengguna WHERE username = ?";
         try (Connection conn = KoneksiDatabase.getKoneksi();
              PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, username);
             ResultSet rs = stmt.executeQuery();
-            return rs.next(); // True jika username ditemukan
+            return rs.next();
         } catch (SQLException e) {
             e.printStackTrace();
         }
