@@ -15,150 +15,194 @@
 <?import javafx.scene.text.Font?>
 
 <TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" 
-         prefHeight="600.0" prefWidth="900.0" tabClosingPolicy="UNAVAILABLE" 
+         prefHeight="650.0" prefWidth="950.0" tabClosingPolicy="UNAVAILABLE" 
          xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" 
-         fx:controller="com.tickaja.controller.AdminDashboardController">
+         fx:controller="pbo.kelompok4.controller.AdminDashboardController">
   
   <tabs>
     <Tab text="Data Film">
       <content>
         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-               <children>
-                  <HBox layoutX="10.0" layoutY="10.0" prefHeight="550.0" prefWidth="880.0" spacing="20.0">
-                     <children>
-                        
-                        <VBox prefHeight="550.0" prefWidth="300.0" spacing="15.0" style="-fx-background-color: #f0f0f0; -fx-padding: 20; -fx-background-radius: 10;">
-                           <children>
-                              <Label text="Input Film Baru">
-                                 <font>
-                                    <Font name="System Bold" size="18.0" />
-                                 </font>
-                              </Label>
-                              
-                              <VBox spacing="5.0">
-                                 <children>
-                                    <Label text="Judul Film" />
-                                    <TextField fx:id="txtJudul" promptText="Masukkan judul film..." />
-                                 </children>
-                              </VBox>
-                              
-                              <VBox spacing="5.0">
-                                 <children>
-                                    <Label text="Deskripsi Singkat" />
-                                    <TextField fx:id="txtDeskripsi" promptText="Sinopsis singkat..." />
-                                 </children>
-                              </VBox>
-                              
-                              <VBox spacing="5.0">
-                                 <children>
-                                    <Label text="Durasi (Menit)" />
-                                    <TextField fx:id="txtDurasi" promptText="Contoh: 120" />
-                                 </children>
-                              </VBox>
-                              
-                              <VBox spacing="5.0">
-                                 <children>
-                                    <Label text="Nama File Poster" />
-                                    <TextField fx:id="txtPoster" promptText="Contoh: avengers.jpg" />
-                                 </children>
-                              </VBox>
-                              
-                              <Button mnemonicParsing="false" onAction="#handleSimpanFilm" prefHeight="40.0" prefWidth="260.0" style="-fx-background-color: #3498db;" text="Simpan Film" textFill="WHITE">
-                                 <font>
-                                    <Font name="System Bold" size="14.0" />
-                                 </font>
-                                 <VBox.margin>
-                                    <Insets top="20.0" />
-                                 </VBox.margin>
-                              </Button>
-                           </children>
-                        </VBox>
-                        
-                        <TableView fx:id="tabelFilm" prefHeight="550.0" prefWidth="560.0" HBox.hgrow="ALWAYS">
-                          <columns>
-                            <TableColumn fx:id="colJudul" prefWidth="250.0" text="Judul Film" />
-                            <TableColumn fx:id="colDurasi" prefWidth="100.0" text="Durasi (Menit)" />
-                          </columns>
-                        </TableView>
-                        
-                     </children>
-                  </HBox>
-               </children>
-            </AnchorPane>
+           <children>
+              <HBox layoutX="10.0" layoutY="10.0" prefHeight="600.0" prefWidth="930.0" spacing="20.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+                 <children>
+                    
+                    <VBox prefHeight="550.0" prefWidth="320.0" spacing="20.0" style="-fx-background-color: #f0f0f0; -fx-padding: 25; -fx-background-radius: 10; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 0);">
+                       <children>
+                          <Label text="Input Film Baru">
+                             <font>
+                                <Font name="System Bold" size="24.0" />
+                             </font>
+                             <VBox.margin>
+                                <Insets bottom="10.0" />
+                             </VBox.margin>
+                          </Label>
+                          
+                          <VBox spacing="5.0">
+                             <children>
+                                <Label text="Judul Film">
+                                   <font>
+                                      <Font size="15.0" />
+                                   </font>
+                                </Label>
+                                <TextField fx:id="txtJudul" prefHeight="35.0" promptText="Masukkan judul film..." />
+                             </children>
+                          </VBox>
+                          
+                          <VBox spacing="5.0">
+                             <children>
+                                <Label text="Deskripsi Singkat">
+                                   <font>
+                                      <Font size="15.0" />
+                                   </font>
+                                </Label>
+                                <TextField fx:id="txtDeskripsi" prefHeight="35.0" promptText="Sinopsis singkat..." />
+                             </children>
+                          </VBox>
+                          
+                          <VBox spacing="5.0">
+                             <children>
+                                <Label text="Durasi (Menit)">
+                                   <font>
+                                      <Font size="15.0" />
+                                   </font>
+                                </Label>
+                                <TextField fx:id="txtDurasi" prefHeight="35.0" promptText="Contoh: 120" />
+                             </children>
+                          </VBox>
+                          
+                          <VBox spacing="5.0">
+                             <children>
+                                <Label text="Nama File Poster">
+                                   <font>
+                                      <Font size="15.0" />
+                                   </font>
+                                </Label>
+                                <TextField fx:id="txtPoster" prefHeight="35.0" promptText="Contoh: avengers.jpg" />
+                             </children>
+                          </VBox>
+                          
+                          <Button mnemonicParsing="false" onAction="#handleSimpanFilm" prefHeight="45.0" prefWidth="280.0" style="-fx-background-color: #3498db; -fx-cursor: hand;" text="Simpan Film" textFill="WHITE">
+                             <font>
+                                <Font name="System Bold" size="15.0" />
+                             </font>
+                             <VBox.margin>
+                                <Insets top="20.0" />
+                             </VBox.margin>
+                          </Button>
+                       </children>
+                    </VBox>
+                    
+                    <TableView fx:id="tabelFilm" prefHeight="550.0" prefWidth="580.0" HBox.hgrow="ALWAYS">
+                      <columns>
+                        <TableColumn fx:id="colJudul" prefWidth="300.0" text="Judul Film" />
+                        <TableColumn fx:id="colDurasi" prefWidth="120.0" text="Durasi (Menit)" />
+                      </columns>
+                      <columnResizePolicy>
+                         <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                      </columnResizePolicy>
+                    </TableView>
+                    
+                 </children>
+              </HBox>
+           </children>
+        </AnchorPane>
       </content>
     </Tab>
     
     <Tab text="Jadwal Tayang">
       <content>
         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-               <children>
-                  <HBox layoutX="10.0" layoutY="10.0" prefHeight="550.0" prefWidth="880.0" spacing="20.0">
-                     <children>
-                        
-                        <VBox prefHeight="550.0" prefWidth="300.0" spacing="15.0" style="-fx-background-color: #e8f6e9; -fx-padding: 20; -fx-background-radius: 10;">
-                           <children>
-                              <Label text="Buat Jadwal">
-                                 <font>
-                                    <Font name="System Bold" size="18.0" />
-                                 </font>
-                              </Label>
-                              
-                              <VBox spacing="5.0">
-                                 <children>
-                                    <Label text="Pilih Film" />
-                                    <ComboBox fx:id="comboFilm" prefWidth="260.0" promptText="-- Pilih Film --" />
-                                 </children>
-                              </VBox>
-                              
-                              <VBox spacing="5.0">
-                                 <children>
-                                    <Label text="Pilih Studio" />
-                                    <ComboBox fx:id="comboStudio" prefWidth="260.0" promptText="-- Pilih Studio --" />
-                                 </children>
-                              </VBox>
-                              
-                              <VBox spacing="5.0">
-                                 <children>
-                                    <Label text="Waktu Tayang" />
-                                    <TextField fx:id="txtWaktu" promptText="YYYY-MM-DD HH:MM:SS" />
-                                    <Label text="*Format: 2025-12-30 19:00:00" textFill="#757575">
-                                       <font>
-                                          <Font size="10.0" />
-                                       </font>
-                                    </Label>
-                                 </children>
-                              </VBox>
-                              
-                              <VBox spacing="5.0">
-                                 <children>
-                                    <Label text="Harga Tiket (Rp)" />
-                                    <TextField fx:id="txtHarga" promptText="Contoh: 50000" />
-                                 </children>
-                              </VBox>
-                              
-                              <Button mnemonicParsing="false" onAction="#handleSimpanJadwal" prefHeight="40.0" prefWidth="260.0" style="-fx-background-color: #27ae60;" text="Terbitkan Jadwal" textFill="WHITE">
-                                 <font>
-                                    <Font name="System Bold" size="14.0" />
-                                 </font>
-                                 <VBox.margin>
-                                    <Insets top="20.0" />
-                                 </VBox.margin>
-                              </Button>
-                           </children>
-                        </VBox>
-                        
-                        <TableView fx:id="tabelJadwal" prefHeight="550.0" prefWidth="560.0" HBox.hgrow="ALWAYS">
-                          <columns>
-                            <TableColumn fx:id="colJadwalFilm" prefWidth="200.0" text="Film" />
-                            <TableColumn fx:id="colJadwalStudio" prefWidth="120.0" text="Studio" />
-                              <TableColumn fx:id="colJadwalWaktu" prefWidth="180.0" text="Waktu Tayang" />
-                          </columns>
-                        </TableView>
-                        
-                     </children>
-                  </HBox>
-               </children>
-            </AnchorPane>
+           <children>
+              <HBox layoutX="10.0" layoutY="10.0" prefHeight="600.0" prefWidth="930.0" spacing="20.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+                 <children>
+                    
+                    <VBox prefHeight="550.0" prefWidth="320.0" spacing="20.0" style="-fx-background-color: #e8f6e9; -fx-padding: 25; -fx-background-radius: 10; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 0);">
+                       <children>
+                          <Label text="Buat Jadwal">
+                             <font>
+                                <Font name="System Bold" size="24.0" />
+                             </font>
+                             <VBox.margin>
+                                <Insets bottom="10.0" />
+                             </VBox.margin>
+                          </Label>
+                          
+                          <VBox spacing="5.0">
+                             <children>
+                                <Label text="Pilih Film">
+                                   <font>
+                                      <Font size="15.0" />
+                                   </font>
+                                </Label>
+                                <ComboBox fx:id="comboFilm" prefHeight="35.0" prefWidth="280.0" promptText="-- Pilih Film --" style="-fx-font-size: 14;" />
+                             </children>
+                          </VBox>
+                          
+                          <VBox spacing="5.0">
+                             <children>
+                                <Label text="Pilih Studio">
+                                   <font>
+                                      <Font size="15.0" />
+                                   </font>
+                                </Label>
+                                <ComboBox fx:id="comboStudio" prefHeight="35.0" prefWidth="280.0" promptText="-- Pilih Studio --" style="-fx-font-size: 14;" />
+                             </children>
+                          </VBox>
+                          
+                          <VBox spacing="5.0">
+                             <children>
+                                <Label text="Waktu Tayang">
+                                   <font>
+                                      <Font size="15.0" />
+                                   </font>
+                                </Label>
+                                <TextField fx:id="txtWaktu" prefHeight="35.0" promptText="YYYY-MM-DD HH:MM:SS" />
+                                <Label text="*Format: 2025-12-30 19:00:00" textFill="#757575">
+                                   <font>
+                                      <Font size="11.0" />
+                                   </font>
+                                </Label>
+                             </children>
+                          </VBox>
+                          
+                          <VBox spacing="5.0">
+                             <children>
+                                <Label text="Harga Tiket (Rp)">
+                                   <font>
+                                      <Font size="15.0" />
+                                   </font>
+                                </Label>
+                                <TextField fx:id="txtHarga" prefHeight="35.0" promptText="Contoh: 50000" />
+                             </children>
+                          </VBox>
+                          
+                          <Button mnemonicParsing="false" onAction="#handleSimpanJadwal" prefHeight="45.0" prefWidth="280.0" style="-fx-background-color: #27ae60; -fx-cursor: hand;" text="Terbitkan Jadwal" textFill="WHITE">
+                             <font>
+                                <Font name="System Bold" size="15.0" />
+                             </font>
+                             <VBox.margin>
+                                <Insets top="20.0" />
+                             </VBox.margin>
+                          </Button>
+                       </children>
+                    </VBox>
+                    
+                    <TableView fx:id="tabelJadwal" prefHeight="550.0" prefWidth="580.0" HBox.hgrow="ALWAYS">
+                      <columns>
+                        <TableColumn fx:id="colJadwalFilm" prefWidth="200.0" text="Film" />
+                        <TableColumn fx:id="colJadwalStudio" prefWidth="120.0" text="Studio" />
+                          <TableColumn fx:id="colJadwalWaktu" prefWidth="180.0" text="Waktu Tayang" />
+                      </columns>
+                      <columnResizePolicy>
+                         <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                      </columnResizePolicy>
+                    </TableView>
+                    
+                 </children>
+              </HBox>
+           </children>
+        </AnchorPane>
       </content>
     </Tab>
   </tabs>

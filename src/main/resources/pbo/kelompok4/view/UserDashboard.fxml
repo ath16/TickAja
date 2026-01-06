@@ -1,26 +1,79 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox spacing="10.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pbo.kelompok4.controller.UserDashboardController">
+<VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="900.0" spacing="20.0" style="-fx-background-color: #f5f5f5;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pbo.kelompok4.controller.UserDashboardController">
    <children>
-      <Label fx:id="lblWelcome" text="Selamat Datang, User">
-         <font>
-            <Font size="18.0" />
-         </font>
-         <VBox.margin>
-            <Insets bottom="10.0" left="10.0" top="10.0" />
-         </VBox.margin>
-      </Label>
-      <Label text="Daftar Film Sedang Tayang (Klik untuk detail):">
+      
+      <HBox alignment="CENTER_LEFT" prefHeight="60.0" prefWidth="200.0" spacing="15.0" style="-fx-background-color: white; -fx-background-radius: 10; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 2);">
+         <children>
+            <Label fx:id="lblWelcome" text="Selamat Datang, User!">
+               <font>
+                  <Font name="System Bold" size="24.0" />
+               </font>
+            </Label>
+            
+            <Region HBox.hgrow="ALWAYS" /> <Button mnemonicParsing="false" onAction="#handleOrderHistory" prefHeight="40.0" style="-fx-background-color: #2196f3; -fx-cursor: hand;" text="Riwayat Order" textFill="WHITE">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+               <padding>
+                  <Insets left="20.0" right="20.0" />
+               </padding>
+            </Button>
+            
+            <Button mnemonicParsing="false" onAction="#handleLogout" prefHeight="40.0" style="-fx-background-color: #e74c3c; -fx-cursor: hand;" text="Logout" textFill="WHITE">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+               <padding>
+                  <Insets left="20.0" right="20.0" />
+               </padding>
+            </Button>
+         </children>
+         <padding>
+            <Insets bottom="10.0" left="20.0" right="20.0" top="10.0" />
+         </padding>
+      </HBox>
+
+      <VBox alignment="CENTER_LEFT" spacing="5.0">
+         <children>
+            <Label text="Sedang Tayang">
+               <font>
+                  <Font name="System Bold" size="20.0" />
+               </font>
+            </Label>
+            <Label text="Pilih film favoritmu untuk melihat jadwal tayang" textFill="#757575">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+         </children>
          <VBox.margin>
             <Insets left="10.0" />
          </VBox.margin>
-      </Label>
-      <ListView fx:id="lvFilms" onMouseClicked="#handleFilmClick" prefHeight="400.0" prefWidth="600.0" />
+      </VBox>
+
+      <ScrollPane fitToHeight="true" fitToWidth="true" style="-fx-background-color: transparent; -fx-background: transparent;" VBox.vgrow="ALWAYS">
+         <content>
+            <GridPane fx:id="filmContainer" alignment="TOP_CENTER" hgap="25.0" vgap="25.0">
+               <padding>
+                  <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+               </padding>
+               </GridPane>
+         </content>
+      </ScrollPane>
+
    </children>
+   <padding>
+      <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+   </padding>
 </VBox>
